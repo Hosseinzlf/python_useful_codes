@@ -3,7 +3,7 @@
 '''
 Explanation of code:
 Create a template SQL database including a table, datetime column in UTC with TIMESTAMP format, and my_variable column.
-Datetime is filled with 1 minutes time interval and can be changed for whatever you want.
+Datetime is filled with 1 minute time interval and can be changed for whatever you want.
 The my_variable is filled with 0 but cane be modified.
 '''
 
