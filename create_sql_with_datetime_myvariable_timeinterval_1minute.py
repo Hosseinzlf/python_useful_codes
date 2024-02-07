@@ -36,7 +36,7 @@ while current_date < end_date:
     formatted_datetime = current_date.strftime('%Y-%m-%d %H:%M:%S+00:00')
     
     # Insert a row with datetime and 0 value
-    cursor.execute('''INSERT INTO main_table (datetime_utc, "my_variable")
+    cursor.execute('''INSERT INTO main_table (datetime_utc, my_variable)
                       VALUES (?, ?)''', (formatted_datetime, 0))
     
     # Move to the next minute
@@ -66,8 +66,8 @@ c = conn.cursor()
 
 # Create table if not exists
 c.execute('''
-    CREATE TABLE IF NOT EXISTS trackingpvboost
-    ([Datetime UTC] TIMESTAMP PRIMARY KEY, [Tracking-Boost Value] REAL)''')
+    CREATE TABLE IF NOT EXISTS main_table
+    ([datetime_utc] TIMESTAMP PRIMARY KEY, [my_variable] REAL)''')
 
 # Generate UTC datetimes at 1-minute intervals for a day
 datetimes = generate_utc_datetimes(start_datetime, end_datetime)
@@ -76,10 +76,11 @@ datetimes = generate_utc_datetimes(start_datetime, end_datetime)
 for dt in datetimes:
     formatted_datetime = dt.strftime("%Y-%m-%d %H:%M:00+00:00")
     c.execute('''
-        INSERT OR IGNORE INTO trackingpvboost ([Datetime UTC])
+        INSERT OR IGNORE INTO main_table ([datetime_utc])
         VALUES (?)''',
               (formatted_datetime,))
 conn.commit()
 conn.close()
 
+print("Database created successfully.")
 
