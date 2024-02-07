@@ -6,7 +6,7 @@ Create a template SQL database including a table, datetime column in UTC with TI
 Datetime is filled with 1 minute time interval and can be changed for whatever you want.
 The my_variable is filled with 0 but cane be modified.
 '''
-
+#------------------------------------------------------- Method one ------------------------------------------------------------------#
 import sqlite3
 import random
 import schedule
@@ -49,7 +49,37 @@ conn.close()
 print("Database created successfully.")
 
 
+#------------------------------------------------------- Method two ------------------------------------------------------------------#
 
+def generate_utc_datetimes(start_datetime, end_datetime, interval_minutes=1):
+    current_datetime = start_datetime
+    while current_datetime <= end_datetime + timedelta(days=1) - timedelta(minutes=1):
+        yield current_datetime
+        current_datetime += timedelta(minutes=interval_minutes)
+        
+        
+start_datetime=datetime(2024, 2, 6)
+end_datetime=datetime(2024, 2, 7)
+# Output database connection
+conn = sqlite3.connect('/db_2024-02-07.db')
+c = conn.cursor()
 
+# Create table if not exists
+c.execute('''
+    CREATE TABLE IF NOT EXISTS trackingpvboost
+    ([Datetime UTC] TIMESTAMP PRIMARY KEY, [Tracking-Boost Value] REAL)''')
+
+# Generate UTC datetimes at 1-minute intervals for a day
+datetimes = generate_utc_datetimes(start_datetime, end_datetime)
+
+# Insert rows with UTC datetimes
+for dt in datetimes:
+    formatted_datetime = dt.strftime("%Y-%m-%d %H:%M:00+00:00")
+    c.execute('''
+        INSERT OR IGNORE INTO trackingpvboost ([Datetime UTC])
+        VALUES (?)''',
+              (formatted_datetime,))
+conn.commit()
+conn.close()
 
 
